@@ -17,7 +17,7 @@ python visualize_model.py --robot kinova_gen3
 python visualize_model.py --robot franka_emika_panda
 ```
 
-To see all available model files:
+To see all available robots grouped by category, with copy-paste commands:
 
 ```bash
 python visualize_model.py --list

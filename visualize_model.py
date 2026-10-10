@@ -25,8 +25,19 @@ def model_files() -> list[Path]:
         if path.is_file()
         and path.suffix.lower() in MODEL_SUFFIXES
         and ".git" not in path.parts
+        and ".venv" not in path.parts
         and "assets" not in path.parts
     )
+
+
+def robot_directories() -> dict[str, list[str]]:
+    """Return robot directory names grouped by their repository category."""
+    categories: dict[str, set[str]] = {}
+    for path in model_files():
+        robot_dir = path.parent
+        category = str(robot_dir.relative_to(ROOT).parent)
+        categories.setdefault(category, set()).add(robot_dir.name)
+    return {category: sorted(names) for category, names in sorted(categories.items())}
 
 
 def find_model(value: str) -> Path:
@@ -103,8 +114,11 @@ def main() -> None:
     args = parse_args()
 
     if args.list:
-        for path in model_files():
-            print(path.relative_to(ROOT))
+        print("Available robots (copy and paste a command):")
+        for category, robot_names in robot_directories().items():
+            print(f"\n[{category}]")
+            for name in robot_names:
+                print(f"  python visualize_model.py --robot {name}")
         return
 
     model_path = find_model(args.model)
